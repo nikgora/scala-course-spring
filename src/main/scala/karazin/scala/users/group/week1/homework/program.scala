@@ -15,7 +15,7 @@ object program:
   def getPostsViews(apiKey: String) = ???
 
   // Desugared
-  def getPostsViewDesugared() = ???
+  def getPostsViewDesugared(apiKey: String) = ???
 
   /* 
     Getting view for a particular user's post
