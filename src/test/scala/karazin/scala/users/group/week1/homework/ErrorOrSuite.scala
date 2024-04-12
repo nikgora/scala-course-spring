@@ -2,17 +2,24 @@ package karazin.scala.users.group.week1.homework
 
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop.*
+import org.scalacheck.Gen
 
 class ErrorOrSuite extends ScalaCheckSuite {
 
+  import karazin.scala.users.group.week1.homework.adt.ErrorOr
   // Fix ??? according to your naming
-  property("applying pure value returns ???") {
-    false
+  property("applying pure value returns Value") {
+    forAll { (value: Int) =>
+      ErrorOr(value) == ErrorOr.Value(value)
+    }
   }
 
   // Fix ??? according to your naming
-  property("applying value which throws an exception returns ???") {
-    false
+  property("applying value which throws an exception returns Exception") {
+    val exceptionGen: Gen[Throwable] = Gen.const(new RuntimeException("Test Exception"))
+    forAll(exceptionGen) { exception =>
+      ErrorOr(throw exception) == ErrorOr.Error(exception)
+    }
   }
 
   // Fix ??? according to your naming
