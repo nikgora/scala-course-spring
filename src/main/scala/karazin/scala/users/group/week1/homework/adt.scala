@@ -27,13 +27,13 @@ object adt:
     */
     def flatMap[U](f: V => ErrorOr[U]): ErrorOr[U] =
       this match {
-        case Value(v) =>
+        case ErrorOr.Value(v) =>
           try {
             f(v)
           } catch {
-            case e: Throwable => Error(e)
+            case e: Throwable => ErrorOr.Error(e)
           }
-        case Error(e) => Error(e)
+        case ErrorOr.Error(e) => ErrorOr.Error(e)
       }
     /* 
       The method is used for changing the internal object
@@ -44,13 +44,13 @@ object adt:
      */
     def map[U](f: V => U): ErrorOr[U] =
       this match {
-        case Value(v) =>
+        case ErrorOr.Value(v) =>
           try {
-            Value(f(v))
+            ErrorOr.Value(f(v))
           } catch {
-            case e: Throwable => Error(e)
+            case e: Throwable => ErrorOr.Error(e)
           }
-        case Error(e) => Error(e)
+        case ErrorOr.Error(e) => ErrorOr.Error(e)
       }
   // Companion object to define constructor
   object ErrorOr:
@@ -62,9 +62,9 @@ object adt:
     */
     def apply[V](v: => V): ErrorOr[V] =
       try {
-        Value(v)
+        ErrorOr.Value(v)
       } catch {
-        case e: Throwable => Error(e)
+        case e: Throwable => ErrorOr.Error(e)
       }
       
   
