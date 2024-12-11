@@ -1,6 +1,28 @@
-package karazin.scala.users.group.week2.topic
+package karazin.scala.users.group.week3.topic
+
+import cats.data.OptionT
+import karazin.scala.users.group.week3.{Functor, Monad}
+
+import scala.concurrent.Future
 
 object adt:
+
+  case class OptionT[F[_], A](value: F[Option[A]]):
+    def flatMap[B](f: A => OptionT[F, B])(using M: Monad[F]): OptionT[F, B] =
+      OptionT(
+        M.flatMap[Option[A], Option[B]](value) {
+          case Option.Some(v)  => f(v).value
+          case Option.None     => M.pure(Option.None) // Future.successful(None)
+        }
+      )
+
+    def map[B](f: A => B)(using Functor: Functor[F]): OptionT[F, B] =
+      OptionT(Functor.map(value)(v => v.map(f)))
+
+    def withFilter(p: A => Boolean)(using Functor: Functor[F]): OptionT[F, A] =
+      OptionT(Functor.map(value)(v => v.withFilter(p)))
+
+
 
   /** Represents optional values. Instances of `Option`
    * are either an instance of `Some` or the object `None`.

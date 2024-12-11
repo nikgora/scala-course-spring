@@ -1,6 +1,6 @@
 package karazin.scala.users.group.week2.topic
 
-import karazin.scala.users.group.week1.topic.model.User.UserId
+import karazin.scala.users.group.week2.topic.model.User.UserId
 
 import java.util.UUID
 
@@ -57,6 +57,25 @@ object desugaring:
   def getUserFirstPostsDesugared(apiKey: String): Option[Post] = 
     getUserProfile(apiKey) flatMap { profile =>
       getPosts(profile.userId)
+    } map { posts =>
+      posts.head
+    }
+
+  /*
+   Both `map`, `flatMap` and -`withFilter`-required case
+   Pipeline execution, the one service is called after another
+   Then internal object is changed (from `List[Post]` to `Post`)
+  */
+  def getUserFirstPostsSafe(apiKey: String): Option[Post] =
+    for
+      profile <- getUserProfile(apiKey)
+      posts <- getPosts(profile.userId)
+      if posts.nonEmpty
+    yield posts.head
+
+  def getUserFirstPostsSafeDesugared(apiKey: String): Option[Post] =
+    getUserProfile(apiKey) flatMap { profile =>
+      getPosts(profile.userId).withFilter(_.nonEmpty)
     } map { posts =>
       posts.head
     }
